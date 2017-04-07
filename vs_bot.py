@@ -35,7 +35,7 @@ def parse_slack_output(slack_rtm_output):
                 return output['text'].split(AT_BOT)[1].strip().lower(),output['channel']
     return None,None
 
-if __name__=="__main__":
+def wait_message():
     READ_WEBSOCKET_DELAY=1
     if slack_client.rtm_connect():
         print("vsts bot started up")
@@ -46,3 +46,6 @@ if __name__=="__main__":
             time.sleep(READ_WEBSOCKET_DELAY)
     else:
         print("Connection failed. Invalid Slack params")
+
+if __name__=="__main__":
+    wait_message()

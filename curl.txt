@@ -1,0 +1,1 @@
+curl -u iamkarlson:b6oll4lmbc74zaxpk5wcdamfhquyhkailrwo4zv75pnke2o24n2a https://iamkarlson.VisualStudio.com/DefaultCollection/_apis/projects?api-version=2.0 | python -m json.tool
