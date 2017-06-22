@@ -1,31 +1,40 @@
-import urllib
-import config.config_manager
+import base64
+import requests
+import pprint
+from config import config_manager
+
 
 class BaseApi:
-    def __init__(self):
+    def __init__(self,type):
         print('base api ctor')
-    def build_client(self,type):
+        self.type=type
+    def build_client(self):
         print('creating vso client')
-        #password_mgr = urllib.HTTPPasswordMgrWithDefaultRealm()
-        password_mgr = urllib.top_level_url
-        top_level_url = "http://example.com/"
+        #password_mgr = urllib.top_level_url
+        self.config = config_manager.config_man("bot.ini")
+        top_level_url = self.config.URL
+        token = ":"+self.config.TOKEN
+        print(token)
+        self.pat = base64.b64encode(bytes(token,'ascii')).decode("utf-8", "ignore")
+        print(self.pat)
+        self.headers = {"Authorization":f"Basic {self.pat}"}
 
-        password_mgr.add_password(None, top_level_url, 'user', 'password')
-
-        handler = urllib.HTTPBasicAuthHandler(password_mgr)
-        opener = urllib.build_opener(urllib.HTTPHandler, handler)
-        request = urllib.Request(url)
-
-
-def api_url(x):
-    default_url = "%s/%s/_apis"%config.URL,config.COLLECTION
-    print(default_url)
-    return {
-        'wis': "{default_url}/wi/",
-        'projects': "{default_url}/projects" % locals(),
-    }[x]
+    def api_url(self):
+        default_url = "%s/%s/_apis"%(self.config.URL,self.config.COLLECTION)
+        print(default_url)
+        return {
+            'wis': f"{default_url}/wit/workitems",
+            'projects': f"{default_url}/projects",
+        }[self.type]
+    def get(self):
+        response = requests.get(self.api_url(),headers=self.headers)
+        #print(response.text)
+        return response.json()
 
 if __name__=="__main__":
-    print(config.URL)
-    print(config.COLLECTION)
-    print(api_url("projects"))
+    api = BaseApi("projects")
+    api.build_client()
+    #print(config.URL) print(config.COLLECTION)
+    print(api.api_url())
+    pp = pprint.PrettyPrinter(indent=4)
+    pp.pprint(api.get())
