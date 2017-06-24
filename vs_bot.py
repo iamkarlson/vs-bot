@@ -1,15 +1,17 @@
 import os
 import time
+from config.config_manager import *
 from slackclient import SlackClient
 
+config = config_man('config/bot.ini')
 # get bot id from environment
-BOT_ID = os.environ.get("BOT_ID")
-
+BOT_ID = config.BOT_ID
+token = config.SLACK_BOT_TOKEN
 AT_BOT="<@"+BOT_ID+">:"
 
 ASK_COMMAND="vsts"
 
-slack_client=SlackClient(os.environ.get('SLACK_BOT_TOKEN'))
+slack_client=SlackClient(token)
 
 
 def handle_command(command,channel):
