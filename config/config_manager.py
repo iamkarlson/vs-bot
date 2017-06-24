@@ -8,10 +8,15 @@ class config_man:
         self.TOKEN=section['token']
         self.URL=section['url']
         self.COLLECTION=section['collection']
+        section = config['BOT']
+        self.BOT_ID=section['bot_id']
+        self.SLACK_BOT_TOKEN=section['slack_bot_token']
 
 if __name__=='__main__':
     #config_path=os.environ['BOT_CONFIG']
-    config = config_man("bot.ini")
-    print(config.TOKEN)
-    print(config.URL)
-    print(config.COLLECTION)
+    testconfig = config_man("bot.ini")
+    print(testconfig.TOKEN)
+    print(testconfig.URL)
+    print(testconfig.COLLECTION)
+    print(testconfig.BOT_ID)
+    print(testconfig.SLACK_BOT_TOKEN)
