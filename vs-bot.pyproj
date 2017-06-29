@@ -5,7 +5,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{d9ca3bcc-43ec-4c05-9ab1-c5c3a255b75d}</ProjectGuid>
     <ProjectHome />
-    <StartupFile>api\baseapi.py</StartupFile>
+    <StartupFile>api\projects_api.py</StartupFile>
     <SearchPath />
     <WorkingDirectory>.</WorkingDirectory>
     <OutputPath>.</OutputPath>
@@ -26,6 +26,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="api\baseapi.py" />
+    <Compile Include="api\projects_api.py">
+      <SubType>Code</SubType>
+    </Compile>
     <Compile Include="api\wiapi.py" />
     <Compile Include="api\__init__.py">
       <SubType>Code</SubType>
