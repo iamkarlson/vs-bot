@@ -13,7 +13,7 @@ class ProjectsApi(BaseApi):
         projects= self.get()
         return projects
 
-    def GET(self,id):
+    def GET(self, id):
         self.build_client()
         project = self.get(id)
         return project
