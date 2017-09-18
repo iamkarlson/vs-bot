@@ -14,15 +14,20 @@ from api.baseapi import BaseApi
 class WiApi(BaseApi):
     def __init__(self):
         BaseApi.__init__(self, "wis")
+        self.build_client()
         print('wi_api ctor.')
 
     def get_by_id(self, item_id):
         api_url = self.api_url()
         url = f"{api_url}?ids={item_id}"
+        print(f"wi url: {url}")
         response = requests.get(url, headers=self.headers)
-        wi_json = next(x for x in response.json()['value'])
-        wi = namedtuple("WorkItem", wi_json.keys())(*wi_json.values())
-        return wi
+        resp_json = response.json()
+        if response.status_code == 200:
+            wi_json = next(x for x in resp_json['value'])
+            wi = namedtuple("WorkItem", wi_json.keys())(*wi_json.values())
+            return wi
+        raise ValueError(resp_json['message'])
 
 
 if __name__ == "__main__":

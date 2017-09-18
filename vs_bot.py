@@ -10,7 +10,7 @@ config = config_man('bot.ini')
 # get bot id from environment
 BOT_ID = config.BOT_ID
 token = config.SLACK_BOT_TOKEN
-AT_BOT = "<@" + BOT_ID + ">:"
+AT_BOT = "<@" + BOT_ID + ">"
 
 ASK_COMMAND = "vsts"
 
@@ -28,9 +28,14 @@ def handle_command(command, channel):
     if command.startswith(ASK_COMMAND):
         response = "Good news, it's new vsts command, which can provide you information about work items"
     elif "wi#" in command:
-        wi_id = re.search("wi#\d+", command).group(0)
-        wi = vsts_api.get_by_id(wi_id)
-        response = wi.url
+        wi_id = re.search("wi#(\d+)", command).group(1)
+        try:
+            wi = vsts_api.get_by_id(wi_id)
+            response = wi.url
+        except ValueError as val_err:
+            response = str(val_err)
+        except:
+            pass
     slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
     return
 
@@ -43,8 +48,10 @@ def parse_slack_output(slack_rtm_output):
     output_list = slack_rtm_output
     if output_list and len(output_list) > 0:
         for output in output_list:
-            if output and 'text' in output and AT_BOT in output['text']:
-                return output['text'].split(AT_BOT)[1].strip().lower(), output['channel']
+            if output and 'text' in output:
+                output_text = output['text']
+                if AT_BOT in output_text:
+                    return output_text.split(AT_BOT)[1].strip().lower(), output['channel']
     return None, None
 
 
@@ -53,7 +60,6 @@ def wait_message():
     if slack_client.rtm_connect():
         print("vsts bot started up")
         while True:
-            print("awaiting command")
             command, channel = parse_slack_output(slack_client.rtm_read())
             if command and channel:
                 handle_command(command, channel)
