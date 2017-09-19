@@ -12,7 +12,6 @@ BOT_ID = config.BOT_ID
 token = config.SLACK_BOT_TOKEN
 AT_BOT = "<@" + BOT_ID + ">"
 
-ASK_COMMAND = "vsts"
 
 slack_client = SlackClient(token)
 vsts_api = WiApi()
@@ -24,20 +23,29 @@ def handle_command(command, channel):
     If so, then acts on the commands.
     If not, returns back what it needs for clarification.
     """
-    response = "For start, ask me about *" + ASK_COMMAND + "*"
-    if command.startswith(ASK_COMMAND):
-        response = "Good news, it's new vsts command, which can provide you information about work items"
-    elif "wi#" in command:
+    if "wi#" in command:
         wi_id = re.search("wi#(\d+)", command).group(1)
         try:
             wi = vsts_api.get_by_id(wi_id)
-            response = wi.url
+            if wi.fields['System.WorkItemType'] == "Bug":
+                attachments = [{"pretext": f"WI#{wi_id} information:",
+                                "text": f"Title: {wi.fields['System.Title']}\n"
+                                        f"Description:{wi.fields['Microsoft.VSTS.TCM.ReproSteps']}",
+                                "color": "#36a64f"}]
+            elif wi.fields['System.WorkItemType'] == "Product Backlog Item":
+                attachments = [{"pretext":"PBI is not yet supported"}]
+            slack_client.api_call("chat.postMessage", channel=channel, attachments=attachments, as_user=True)
+            return
         except ValueError as val_err:
             response = str(val_err)
         except:
             pass
-    slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
-    return
+    else:
+        response = """To start with bot, you can use following commands:
+        wi#1 - will return brief information about requested WI. WI's counter is one for all projects. Hence no need to mention project here.
+        """
+        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        return
 
 
 def parse_slack_output(slack_rtm_output):
