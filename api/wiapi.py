@@ -30,6 +30,7 @@ class WiApi(BaseApi):
         raise ValueError(resp_json['message'])
 
 
+
 if __name__ == "__main__":
     api = WiApi()
     api.build_client()

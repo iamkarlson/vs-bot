@@ -3,6 +3,7 @@ import time
 import re
 
 from api.wiapi import WiApi
+from api.worker import Worker
 from config.config_manager import *
 from slackclient import SlackClient
 
@@ -12,9 +13,8 @@ BOT_ID = config.BOT_ID
 token = config.SLACK_BOT_TOKEN
 AT_BOT = "<@" + BOT_ID + ">"
 
-
+worker = Worker()
 slack_client = SlackClient(token)
-vsts_api = WiApi()
 
 
 def handle_command(command, channel):
@@ -26,20 +26,13 @@ def handle_command(command, channel):
     if "wi#" in command:
         wi_id = re.search("wi#(\d+)", command).group(1)
         try:
-            wi = vsts_api.get_by_id(wi_id)
-            if wi.fields['System.WorkItemType'] == "Bug":
-                attachments = [{"pretext": f"WI#{wi_id} information:",
-                                "text": f"Title: {wi.fields['System.Title']}\n"
-                                        f"Description:{wi.fields['Microsoft.VSTS.TCM.ReproSteps']}",
-                                "color": "#36a64f"}]
-            elif wi.fields['System.WorkItemType'] == "Product Backlog Item":
-                attachments = [{"pretext":"PBI is not yet supported"}]
+            attachments = worker.get_wi(wi_id)
             slack_client.api_call("chat.postMessage", channel=channel, attachments=attachments, as_user=True)
             return
         except ValueError as val_err:
             response = str(val_err)
-        except:
-            pass
+            slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+            return
     else:
         response = """To start with bot, you can use following commands:
         wi#1 - will return brief information about requested WI. WI's counter is one for all projects. Hence no need to mention project here.
