@@ -16,6 +16,8 @@ AT_BOT = "<@" + BOT_ID + ">"
 worker = Worker()
 slack_client = SlackClient(token)
 
+SUPPORTED_COMMANDS= ["projects","project","wi","workitem","help"]
+
 
 def handle_command(command, channel):
     """
@@ -23,7 +25,7 @@ def handle_command(command, channel):
     If so, then acts on the commands.
     If not, returns back what it needs for clarification.
     """
-    if "wi#" in command:
+    if "wi#" in command or "workitem#" in command:
         wi_id = re.search("wi#(\d+)", command).group(1)
         try:
             attachments = worker.get_wi(wi_id)
