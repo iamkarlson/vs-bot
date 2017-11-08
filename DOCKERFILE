@@ -1,0 +1,9 @@
+FROM python:3.6.2
+
+COPY src/ /usr/vs-bot/
+COPY requirements.txt /usr/vs-bot
+WORKDIR /usr/vs-bot
+RUN pip install -r requirements.txt
+RUN python --version
+RUN ls /usr/vs-bot/
+CMD ["python", "-u", "/usr/vs-bot/vs_bot.py"]
