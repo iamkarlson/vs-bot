@@ -7,9 +7,12 @@ class Worker:
         self.vsts_api = WiApi()
 
     def get_wi(self, wi_id):
-        attachments = ""
         wi = self.vsts_api.get_by_id(wi_id)
 
+        return self.create_slack_message( wi)
+
+    def create_slack_message(self, wi):
+        attachments = ""
         if ITEM_TYPE_FIELD not in wi.fields:
             attachments = [{"pretext": "this kind of work items is not supported yet"}]
             return [attachments]
@@ -28,7 +31,6 @@ class Worker:
             attachments['fields'].append({"title": "Assigned to", "short": True, "value": wi.fields[ASSIGNED_TO_FIELD]})
         else:
             attachments['fields'].append({"title": "Assigned to", "short": True, "value": "None"})
-
         if ITERATION_PATH_FIELD in wi.fields:
             attachments['fields'].append(
                 {"title": "Iteration", "short": True, "value": wi.fields[ITERATION_PATH_FIELD]})

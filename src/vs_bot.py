@@ -1,4 +1,5 @@
 import os
+import argparse
 import time
 import re
 
@@ -6,6 +7,7 @@ from api.wiapi import WiApi
 from api.worker import Worker
 from config.config_manager import *
 from slackclient import SlackClient
+
 
 config = config_man('bot.ini')
 # get bot id from environment
@@ -72,4 +74,7 @@ def wait_message():
 
 
 if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description='Visual Studio Team Services bot. Posting work items information to slack')
+    parser.print_help()
+    args = parser.parse_args()
     wait_message()
