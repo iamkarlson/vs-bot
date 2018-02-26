@@ -12,7 +12,7 @@ class BaseApi:
     def build_client(self):
         print('creating vso client')
         # password_mgr = urllib.top_level_url
-        self.config = config_manager.config_man("bot.ini")
+        self.config = config_manager.ConfigManager("bot.ini")
         top_level_url = self.config.URL
         token = ":" + self.config.TOKEN
         print(token)

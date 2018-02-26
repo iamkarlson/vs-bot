@@ -7,7 +7,7 @@ from api.worker import Worker
 from config.config_manager import *
 from slackclient import SlackClient
 
-config = config_man('bot.ini')
+config = ConfigManager('bot.ini')
 # get bot id from environment
 BOT_ID = config.BOT_ID
 token = config.SLACK_BOT_TOKEN
@@ -24,7 +24,11 @@ def handle_command(command, channel):
     If not, returns back what it needs for clarification.
     """
     if "wi#" in command:
-        wi_id = re.search("wi#(\d+)", command).group(1)
+        reg_match = re.search("wi#(\d+)", command)
+        if not reg_match:
+            send_help(channel)
+            return
+        wi_id = reg_match.group(1)
         try:
             attachments = worker.get_wi(wi_id)
             slack_client.api_call("chat.postMessage", channel=channel, attachments=attachments, as_user=True)
@@ -34,11 +38,16 @@ def handle_command(command, channel):
             slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
             return
     else:
-        response = """To start with bot, you can use following commands:
-        wi#1 - will return brief information about requested WI. WI's counter is one for all projects. Hence no need to mention project here.
-        """
-        slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
+        send_help(channel)
         return
+
+
+def send_help(channel):
+    response = """To use a bot, you can type following commands:
+        wi#1 - will return brief information about requested WI. WI's counter is one for all projects. 
+        Hence no need to mention project here.
+        """
+    slack_client.api_call("chat.postMessage", channel=channel, text=response, as_user=True)
 
 
 def parse_slack_output(slack_rtm_output):
