@@ -3,6 +3,7 @@ import configparser
 
 class ConfigManager:
     def __init__(self, config_path):
+        try :
             config = configparser.ConfigParser()
             config.read(config_path)
             section = config['DEFAULT']
@@ -12,6 +13,10 @@ class ConfigManager:
             section = config['BOT']
             self.BOT_ID = section['bot_id']
             self.SLACK_BOT_TOKEN = section['slack_bot_token']
+        except:
+            print("config is not initialized")
+            pass
+
 
 
 if __name__ == '__main__':
