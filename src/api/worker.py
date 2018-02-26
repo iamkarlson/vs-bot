@@ -1,5 +1,5 @@
 from api.constants import *
-from api.wiapi import WiApi
+from api.requesters.wiapi import WiApi
 
 
 class Worker:

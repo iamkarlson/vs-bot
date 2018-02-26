@@ -2,13 +2,13 @@ import requests
 import pprint
 from collections import namedtuple
 
-from api.baseapi import BaseApi
+from api.requesters.baseapi import BaseApi
 
 import pprint
 
 import requests
 
-from api.baseapi import BaseApi
+from api.requesters.baseapi import BaseApi
 
 
 class WiApi(BaseApi):

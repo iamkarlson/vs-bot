@@ -2,7 +2,6 @@ import os
 import time
 import re
 
-from api.wiapi import WiApi
 from api.worker import Worker
 from config.config_manager import *
 from slackclient import SlackClient
